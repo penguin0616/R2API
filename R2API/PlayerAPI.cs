@@ -2,6 +2,7 @@
 using R2API.Utils;
 using RoR2;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 
@@ -22,7 +23,7 @@ namespace R2API
 			characterBody.SetFieldValue("level", TeamManager.instance.GetTeamLevel(characterBody.teamComponent.teamIndex));
 
 			//Character Stats
-			int maxHealth = 0;
+			float maxHealth = 0;
 			int healthRegen = 0;
 			bool isElite = false;
 			int maxShield = 0;
@@ -50,10 +51,52 @@ namespace R2API
 			float SpecialCooldownScale = 0;
 			float SpecialStock = 0;
 
-			/* Calculate Vanilla items effects
-			* 
-			* TODO
-			*/
+			Dictionary<ItemIndex, int> Items = new Dictionary<ItemIndex, int>();
+			EquipmentIndex eIndex = EquipmentIndex.None;
+			uint infusionBonus = 0u;
+			float Daggerpower = 0f;
+			if (characterBody.inventory)
+			{
+				characterBody.SetFieldValue("level", characterBody.level+(float)characterBody.inventory.GetItemCount(ItemIndex.LevelBonus));
+				Items.Add(ItemIndex.Infusion,characterBody.inventory.GetItemCount(ItemIndex.Infusion));
+				Items.Add(ItemIndex.HealWhileSafe, characterBody.inventory.GetItemCount(ItemIndex.HealWhileSafe));
+				Items.Add(ItemIndex.PersonalShield, characterBody.inventory.GetItemCount(ItemIndex.PersonalShield));
+				Items.Add(ItemIndex.Hoof, characterBody.inventory.GetItemCount(ItemIndex.Hoof));
+				Items.Add(ItemIndex.SprintOutOfCombat, characterBody.inventory.GetItemCount(ItemIndex.SprintOutOfCombat));
+				Items.Add(ItemIndex.Feather, characterBody.inventory.GetItemCount(ItemIndex.Feather));
+				Items.Add(ItemIndex.Syringe, characterBody.inventory.GetItemCount(ItemIndex.Syringe));
+				Items.Add(ItemIndex.CritGlasses, characterBody.inventory.GetItemCount(ItemIndex.CritGlasses));
+				Items.Add(ItemIndex.AttackSpeedOnCrit, characterBody.inventory.GetItemCount(ItemIndex.AttackSpeedOnCrit));
+				Items.Add(ItemIndex.CooldownOnCrit, characterBody.inventory.GetItemCount(ItemIndex.CooldownOnCrit));
+				Items.Add(ItemIndex.HealOnCrit, characterBody.inventory.GetItemCount(ItemIndex.HealOnCrit));
+				Items.Add(ItemIndex.ShieldOnly, characterBody.inventory.GetItemCount(ItemIndex.ShieldOnly));
+				Items.Add(ItemIndex.AlienHead, characterBody.inventory.GetItemCount(ItemIndex.AlienHead));
+				Items.Add(ItemIndex.Knurl, characterBody.inventory.GetItemCount(ItemIndex.Knurl));
+				Items.Add(ItemIndex.BoostHp, characterBody.inventory.GetItemCount(ItemIndex.BoostHp));
+				Items.Add(ItemIndex.CritHeal, characterBody.inventory.GetItemCount(ItemIndex.CritHeal));
+				Items.Add(ItemIndex.SprintBonus, characterBody.inventory.GetItemCount(ItemIndex.SprintBonus));
+				Items.Add(ItemIndex.SecondarySkillMagazine, characterBody.inventory.GetItemCount(ItemIndex.SecondarySkillMagazine));
+				Items.Add(ItemIndex.SprintArmor, characterBody.inventory.GetItemCount(ItemIndex.SprintArmor));
+				Items.Add(ItemIndex.UtilitySkillMagazine, characterBody.inventory.GetItemCount(ItemIndex.UtilitySkillMagazine));
+				Items.Add(ItemIndex.HealthDecay, characterBody.inventory.GetItemCount(ItemIndex.HealthDecay));
+				Items.Add(ItemIndex.DrizzlePlayerHelper, characterBody.inventory.GetItemCount(ItemIndex.DrizzlePlayerHelper));
+				movementSpeed += characterBody.GetBuffCount(BuffIndex.BeetleJuice);
+				Daggerpower = characterBody.CalcLunarDaggerPower();
+				eIndex = characterBody.inventory.currentEquipmentIndex;
+				infusionBonus = characterBody.inventory.infusionBonus;
+			}
+			float level = characterBody.level -1f;
+			isElite = characterBody.buffMask.containsEliteBuff;
+			maxHealth = characterBody.baseMaxHealth + characterBody.levelMaxHealth * characterBody.level - 1f;
+
+			;
+			//Max Health Bonuses
+			maxHealth += Items[ItemIndex.Infusion]> 0 ? infusionBonus : 0;
+			maxHealth += Items[ItemIndex.Knurl] * 40f;
+			maxHealth *= Math.Max(Items[ItemIndex.BoostHp] * 0.1f,1f);
+			maxHealth *= characterBody.HasBuff(BuffIndex.AffixBlue) ? 0.5f : 1f;
+			maxHealth /= Daggerpower;
+			characterBody.SetProperyValue("maxHealth", maxHealth);
 
 			foreach (var x in PlayerAPI.CustomEffects)
 			{
