@@ -8,10 +8,10 @@ namespace R2API.Utils {
         public Dictionary<string, bool> ProcList = new Dictionary<string, bool>();
 
         public ModProc() {
-            foreach (ProcType proc in (ProcType[])Enum.GetValues(typeof(ProcType))) {
+            foreach (var proc in (ProcType[])Enum.GetValues(typeof(ProcType))) {
                 ProcList.Add(proc.ToString(), false);
             }
-            foreach (string proc in ModProcManager.CustomProcList) {
+            foreach (var proc in ModProcManager.CustomProcList) {
                 ProcList.Add(proc, false);
             }
         }

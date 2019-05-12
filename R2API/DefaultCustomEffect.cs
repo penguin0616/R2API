@@ -8,20 +8,20 @@ using System.Collections.Generic;
 namespace R2API {
     class HealOnCritHitReplace : ModHitEffect {
         public override bool Condition(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int count) {
-            ProcChainMask procChainMask = damageInfo.procChainMask;
+            var procChainMask = damageInfo.procChainMask;
             return damageInfo.crit && procChainMask.GetProcValue(ProcType.HealOnCrit);
         }
 
         public override void Effect(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int itemCount) {
-            float procCoefficient = damageInfo.procCoefficient;
-            CharacterBody body = damageInfo.attacker.GetComponent<CharacterBody>();
-            ProcChainMask procChainMask = damageInfo.procChainMask;
+            var procCoefficient = damageInfo.procCoefficient;
+            var body = damageInfo.attacker.GetComponent<CharacterBody>();
+            var procChainMask = damageInfo.procChainMask;
 
-            Inventory inventory = body.master.inventory;
+            var inventory = body.master.inventory;
 
             procChainMask.SetProcValue(ProcType.HealOnCrit, true);
             if (itemCount > 0 && body.healthComponent) {
-                int ProcHealthSoundId = (int)Util.PlaySound("Play_item_proc_crit_heal", body.gameObject);
+                var ProcHealthSoundId = (int)Util.PlaySound("Play_item_proc_crit_heal", body.gameObject);
                 if (NetworkServer.active) {
                     double HealResult = body.healthComponent.Heal((float)(4f + itemCount * 4f) * procCoefficient, procChainMask, true);
                 }
@@ -35,8 +35,8 @@ namespace R2API {
         }
 
         public override void Effect(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int itemCount) {
-            float procCoefficient = damageInfo.procCoefficient;
-            CharacterBody body = damageInfo.attacker.GetComponent<CharacterBody>();
+            var procCoefficient = damageInfo.procCoefficient;
+            var body = damageInfo.attacker.GetComponent<CharacterBody>();
 
             body.AddTimedBuff(BuffIndex.AttackSpeedOnCrit, 2f * procCoefficient);
         }
@@ -44,24 +44,24 @@ namespace R2API {
 
     class CoolDownOnCritHitReplace : ModHitEffect {
         public override bool Condition(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int count) {
-            ProcChainMask procChainMask = damageInfo.procChainMask;
+            var procChainMask = damageInfo.procChainMask;
             return damageInfo.crit;
         }
 
         public override void Effect(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int itemCount) {
-            float procCoefficient = damageInfo.procCoefficient;
-            CharacterBody body = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterMaster master = body.master;
-            Inventory inventory = master.inventory;
+            var procCoefficient = damageInfo.procCoefficient;
+            var body = damageInfo.attacker.GetComponent<CharacterBody>();
+            var master = body.master;
+            var inventory = master.inventory;
 
-            int WickedRingCount = inventory.GetItemCount(ItemIndex.CooldownOnCrit);
+            var WickedRingCount = inventory.GetItemCount(ItemIndex.CooldownOnCrit);
             if (WickedRingCount <= 0)
                 return;
-            int num = (int)Util.PlaySound("Play_item_proc_crit_cooldown", body.gameObject);
-            SkillLocator component = body.GetComponent<SkillLocator>();
+            var num = (int)Util.PlaySound("Play_item_proc_crit_cooldown", body.gameObject);
+            var component = body.GetComponent<SkillLocator>();
             if (!(bool)component)
                 return;
-            float dt = WickedRingCount * procCoefficient;
+            var dt = WickedRingCount * procCoefficient;
             if ((bool)component.primary)
                 component.primary.RunRecharge(dt);
             if ((bool)component.secondary)
@@ -80,15 +80,15 @@ namespace R2API {
         }
 
         public override void Effect(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int itemCount) {
-            CharacterBody body = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterBody Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
+            var body = damageInfo.attacker.GetComponent<CharacterBody>();
+            var Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
 
-            Inventory inventory = body.master.inventory;
+            var inventory = body.master.inventory;
 
             if (itemCount > 0) {
-                HealthComponent AttackerHealthComponent = Attacker.GetComponent<HealthComponent>();
+                var AttackerHealthComponent = Attacker.GetComponent<HealthComponent>();
                 if (AttackerHealthComponent) {
-                    ProcChainMask procChainMask = damageInfo.procChainMask;
+                    var procChainMask = damageInfo.procChainMask;
                     procChainMask.SetProcValue(ProcType.HealOnHit, true);
                     double num = AttackerHealthComponent.Heal(itemCount * damageInfo.procCoefficient, procChainMask, true);
                 }
@@ -98,14 +98,14 @@ namespace R2API {
 
     class StunOnHitReplace : ModHitEffect {
         public override bool Condition(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int count) {
-            CharacterBody body = damageInfo.attacker.GetComponent<CharacterBody>();
-            Inventory inventory = body.master.inventory;
+            var body = damageInfo.attacker.GetComponent<CharacterBody>();
+            var inventory = body.master.inventory;
 
             return Util.CheckRoll(1.0f - 1.0f / (damageInfo.procCoefficient * 0.05f * count + 1.0f) * 100f, body.master.GetComponent<CharacterMaster>());
         }
 
         public override void Effect(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int itemCount) {
-            SetStateOnHurt HurtStat = victim.GetComponent<SetStateOnHurt>();
+            var HurtStat = victim.GetComponent<SetStateOnHurt>();
             if (HurtStat)
                 HurtStat.SetStun(2f);
         }
@@ -113,8 +113,8 @@ namespace R2API {
 
     class BleedOnHitReplace : ModHitEffect {
         public override bool Condition(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int count) {
-            CharacterBody Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterMaster master = Attacker.master;
+            var Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
+            var master = Attacker.master;
             return !damageInfo.procChainMask.GetProcValue(ProcType.BleedOnHit) && (damageInfo.damageType & DamageType.BleedOnHit) > 0U && Util.CheckRoll(15f * count * damageInfo.procCoefficient, master);
         }
 
@@ -126,19 +126,19 @@ namespace R2API {
 
     class SlowOnHitReplace : ModHitEffect {
         public override bool Condition(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int count) {
-            CharacterBody characterBody = victim ? victim.GetComponent<CharacterBody>() : null;
+            var characterBody = victim ? victim.GetComponent<CharacterBody>() : null;
             return characterBody;
         }
 
         public override void Effect(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int itemCount) {
-            CharacterBody body = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterBody Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterBody characterBody = victim ? victim.GetComponent<CharacterBody>() : null;
-            CharacterMaster master = Attacker.master;
-            Inventory inventory = master.inventory;
-            TeamComponent Team = Attacker.GetComponent<TeamComponent>();
-            TeamIndex attackerTeamIndex = Team ? Team.teamIndex : TeamIndex.Neutral;
-            Vector3 aimOrigin = Attacker.aimOrigin;
+            var body = damageInfo.attacker.GetComponent<CharacterBody>();
+            var Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
+            var characterBody = victim ? victim.GetComponent<CharacterBody>() : null;
+            var master = Attacker.master;
+            var inventory = master.inventory;
+            var Team = Attacker.GetComponent<TeamComponent>();
+            var attackerTeamIndex = Team ? Team.teamIndex : TeamIndex.Neutral;
+            var aimOrigin = Attacker.aimOrigin;
 
             characterBody.AddTimedBuff(BuffIndex.Slow60, 1f * itemCount);
 
@@ -148,19 +148,19 @@ namespace R2API {
 
     class GoldOnHitReplace : ModHitEffect {
         public override bool Condition(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int count) {
-            CharacterMaster master = damageInfo.attacker.GetComponent<CharacterBody>().master;
+            var master = damageInfo.attacker.GetComponent<CharacterBody>().master;
             return Util.CheckRoll(30f * damageInfo.procCoefficient, master);
         }
 
         public override void Effect(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int itemCount) {
-            CharacterBody body = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterBody Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterBody characterBody = victim ? victim.GetComponent<CharacterBody>() : null;
-            CharacterMaster master = Attacker.master;
-            Inventory inventory = master.inventory;
-            TeamComponent Team = Attacker.GetComponent<TeamComponent>();
-            TeamIndex attackerTeamIndex = Team ? Team.teamIndex : TeamIndex.Neutral;
-            Vector3 aimOrigin = Attacker.aimOrigin;
+            var body = damageInfo.attacker.GetComponent<CharacterBody>();
+            var Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
+            var characterBody = victim ? victim.GetComponent<CharacterBody>() : null;
+            var master = Attacker.master;
+            var inventory = master.inventory;
+            var Team = Attacker.GetComponent<TeamComponent>();
+            var attackerTeamIndex = Team ? Team.teamIndex : TeamIndex.Neutral;
+            var aimOrigin = Attacker.aimOrigin;
 
 
             master.GiveMoney((uint)(itemCount * 2.0 * Run.instance.difficultyCoefficient));
@@ -176,23 +176,23 @@ namespace R2API {
         static void ProcMissile(int stack, CharacterBody attackerBody, CharacterMaster attackerMaster, TeamIndex attackerTeamIndex, ProcChainMask procChainMask, GameObject victim, DamageInfo damageInfo) {
             if (stack <= 0)
                 return;
-            GameObject AttackerGO = attackerBody.gameObject;
-            InputBankTest AttackerBankTest = AttackerGO.GetComponent<InputBankTest>();
-            Vector3 position = AttackerBankTest ? AttackerBankTest.aimOrigin : GlobalEventManager.instance.transform.position;
-            Vector3 vector3 = AttackerBankTest ? AttackerBankTest.aimDirection : GlobalEventManager.instance.transform.forward;
-            Vector3 up = Vector3.up;
+            var AttackerGO = attackerBody.gameObject;
+            var AttackerBankTest = AttackerGO.GetComponent<InputBankTest>();
+            var position = AttackerBankTest ? AttackerBankTest.aimOrigin : GlobalEventManager.instance.transform.position;
+            var vector3 = AttackerBankTest ? AttackerBankTest.aimDirection : GlobalEventManager.instance.transform.forward;
+            var up = Vector3.up;
             if (!Util.CheckRoll(10f * damageInfo.procCoefficient, attackerMaster))
                 return;
-            GameObject MissileGO = UnityEngine.Object.Instantiate<GameObject>(GlobalEventManager.instance.missilePrefab, position, Util.QuaternionSafeLookRotation(up + UnityEngine.Random.insideUnitSphere * 0.0f));
-            ProjectileController MissileControler = MissileGO.GetComponent<ProjectileController>();
+            var MissileGO = UnityEngine.Object.Instantiate<GameObject>(GlobalEventManager.instance.missilePrefab, position, Util.QuaternionSafeLookRotation(up + UnityEngine.Random.insideUnitSphere * 0.0f));
+            var MissileControler = MissileGO.GetComponent<ProjectileController>();
             MissileControler.Networkowner = AttackerGO.gameObject;
             MissileControler.procChainMask = procChainMask;
             MissileControler.procChainMask.AddProc(ProcType.Missile);
             MissileGO.GetComponent<TeamFilter>().teamIndex = attackerTeamIndex;
             MissileGO.GetComponent<MissileController>().target = victim.transform;
-            float damageCoefficient = 3f * (float)stack;
-            float num = Util.OnHitProcDamage(damageInfo.damage, attackerBody.damage, damageCoefficient);
-            ProjectileDamage MissileDamage = MissileGO.GetComponent<ProjectileDamage>();
+            var damageCoefficient = 3f * (float)stack;
+            var num = Util.OnHitProcDamage(damageInfo.damage, attackerBody.damage, damageCoefficient);
+            var MissileDamage = MissileGO.GetComponent<ProjectileDamage>();
             MissileDamage.damage = num;
             MissileDamage.crit = damageInfo.crit;
             MissileDamage.force = 200f;
@@ -201,14 +201,14 @@ namespace R2API {
         }
 
         public override void Effect(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int itemCount) {
-            CharacterBody body = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterBody Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterBody characterBody = victim ? victim.GetComponent<CharacterBody>() : null;
-            CharacterMaster master = Attacker.master;
-            Inventory inventory = master.inventory;
-            TeamComponent Team = Attacker.GetComponent<TeamComponent>();
-            TeamIndex attackerTeamIndex = Team ? Team.teamIndex : TeamIndex.Neutral;
-            Vector3 aimOrigin = Attacker.aimOrigin;
+            var body = damageInfo.attacker.GetComponent<CharacterBody>();
+            var Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
+            var characterBody = victim ? victim.GetComponent<CharacterBody>() : null;
+            var master = Attacker.master;
+            var inventory = master.inventory;
+            var Team = Attacker.GetComponent<TeamComponent>();
+            var attackerTeamIndex = Team ? Team.teamIndex : TeamIndex.Neutral;
+            var aimOrigin = Attacker.aimOrigin;
 
             ProcMissile(itemCount, Attacker, master, attackerTeamIndex, damageInfo.procChainMask, victim, damageInfo);
 
@@ -217,24 +217,24 @@ namespace R2API {
 
     class UkeleleOnHitReplace : ModHitEffect {
         public override bool Condition(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int count) {
-            CharacterMaster master = damageInfo.attacker.GetComponent<CharacterBody>().master;
+            var master = damageInfo.attacker.GetComponent<CharacterBody>().master;
             return !damageInfo.procChainMask.HasProc(ProcType.ChainLightning) && Util.CheckRoll(25f * damageInfo.procCoefficient, master);
         }
 
         public override void Effect(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int itemCount) {
-            CharacterBody body = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterBody Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterBody characterBody = victim ? victim.GetComponent<CharacterBody>() : null;
-            CharacterMaster master = Attacker.master;
-            Inventory inventory = master.inventory;
-            TeamComponent Team = Attacker.GetComponent<TeamComponent>();
-            TeamIndex attackerTeamIndex = Team ? Team.teamIndex : TeamIndex.Neutral;
-            Vector3 aimOrigin = Attacker.aimOrigin;
+            var body = damageInfo.attacker.GetComponent<CharacterBody>();
+            var Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
+            var characterBody = victim ? victim.GetComponent<CharacterBody>() : null;
+            var master = Attacker.master;
+            var inventory = master.inventory;
+            var Team = Attacker.GetComponent<TeamComponent>();
+            var attackerTeamIndex = Team ? Team.teamIndex : TeamIndex.Neutral;
+            var aimOrigin = Attacker.aimOrigin;
 
 
-            float damageCoefficient = 0.8f;
-            float Damage = Util.OnHitProcDamage(damageInfo.damage, Attacker.damage, damageCoefficient);
-            LightningOrb lightningOrb = new LightningOrb();
+            var damageCoefficient = 0.8f;
+            var Damage = Util.OnHitProcDamage(damageInfo.damage, Attacker.damage, damageCoefficient);
+            var lightningOrb = new LightningOrb();
             lightningOrb.origin = damageInfo.position;
             lightningOrb.damageValue = Damage;
             lightningOrb.isCrit = damageInfo.crit;
@@ -251,7 +251,7 @@ namespace R2API {
             lightningOrb.lightningType = LightningOrb.LightningType.Ukulele;
             lightningOrb.damageColorIndex = DamageColorIndex.Item;
             lightningOrb.range += 2 * itemCount;
-            HurtBox hurtBox = lightningOrb.PickNextTarget(damageInfo.position);
+            var hurtBox = lightningOrb.PickNextTarget(damageInfo.position);
             if (hurtBox) {
                 lightningOrb.target = hurtBox;
                 OrbManager.instance.AddOrb(lightningOrb);
@@ -261,34 +261,34 @@ namespace R2API {
 
     class HookEffectReplace : ModHitEffect {
         public override bool Condition(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int count) {
-            CharacterBody Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterMaster master = Attacker.master;
-            Inventory inventory = master.inventory;
+            var Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
+            var master = Attacker.master;
+            var inventory = master.inventory;
 
-            float ProcChance = (float)((1.0 - 100.0 / (100.0 + 20.0 * count)) * 100.0);
+            var ProcChance = (float)((1.0 - 100.0 / (100.0 + 20.0 * count)) * 100.0);
             return !damageInfo.procChainMask.HasProc(ProcType.BounceNearby) && Util.CheckRoll(ProcChance * damageInfo.procCoefficient, master);
         }
 
         public override void Effect(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int itemCount) {
-            CharacterBody body = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterBody Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterBody characterBody = victim ? victim.GetComponent<CharacterBody>() : null;
-            CharacterMaster master = Attacker.master;
-            Inventory inventory = master.inventory;
-            TeamComponent Team = Attacker.GetComponent<TeamComponent>();
-            TeamIndex attackerTeamIndex = Team ? Team.teamIndex : TeamIndex.Neutral;
-            Vector3 aimOrigin = Attacker.aimOrigin;
+            var body = damageInfo.attacker.GetComponent<CharacterBody>();
+            var Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
+            var characterBody = victim ? victim.GetComponent<CharacterBody>() : null;
+            var master = Attacker.master;
+            var inventory = master.inventory;
+            var Team = Attacker.GetComponent<TeamComponent>();
+            var attackerTeamIndex = Team ? Team.teamIndex : TeamIndex.Neutral;
+            var aimOrigin = Attacker.aimOrigin;
 
 
 
-            List<HealthComponent> healthComponentList = new List<HealthComponent>()
+            var healthComponentList = new List<HealthComponent>()
                     {
                       victim.GetComponent<HealthComponent>()
                     };
-            float damageCoefficient = 1f;
-            float num3 = Util.OnHitProcDamage(damageInfo.damage, Attacker.damage, damageCoefficient);
-            for (int index = 0; index < 5 + itemCount * 5; ++index) {
-                BounceOrb bounceOrb = new BounceOrb {
+            var damageCoefficient = 1f;
+            var num3 = Util.OnHitProcDamage(damageInfo.damage, Attacker.damage, damageCoefficient);
+            for (var index = 0; index < 5 + itemCount * 5; ++index) {
+                var bounceOrb = new BounceOrb {
                     origin = damageInfo.position,
                     damageValue = num3,
                     isCrit = damageInfo.crit,
@@ -300,7 +300,7 @@ namespace R2API {
                 bounceOrb.procCoefficient = 0.33f;
                 bounceOrb.damageColorIndex = DamageColorIndex.Item;
                 bounceOrb.bouncedObjects = healthComponentList;
-                HurtBox hurtBox = bounceOrb.PickNextTarget(victim.transform.position, 30f);
+                var hurtBox = bounceOrb.PickNextTarget(victim.transform.position, 30f);
                 if ((bool)hurtBox) {
                     bounceOrb.target = hurtBox;
                     OrbManager.instance.AddOrb(bounceOrb);
@@ -312,30 +312,30 @@ namespace R2API {
 
     class StickyBombOnHitReplace : ModHitEffect {
         public override bool Condition(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int count) {
-            CharacterBody body = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterBody Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterBody characterBody = victim ? victim.GetComponent<CharacterBody>() : null;
-            CharacterMaster master = Attacker.master;
-            Inventory inventory = master.inventory;
+            var body = damageInfo.attacker.GetComponent<CharacterBody>();
+            var Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
+            var characterBody = victim ? victim.GetComponent<CharacterBody>() : null;
+            var master = Attacker.master;
+            var inventory = master.inventory;
 
             return Util.CheckRoll((float)(2.5 + 2.5 * count) * damageInfo.procCoefficient, master) && characterBody;
         }
 
         public override void Effect(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int itemCount) {
-            CharacterBody body = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterBody Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterBody characterBody = victim ? victim.GetComponent<CharacterBody>() : null;
-            CharacterMaster master = Attacker.master;
-            Inventory inventory = master.inventory;
-            TeamComponent Team = Attacker.GetComponent<TeamComponent>();
-            TeamIndex attackerTeamIndex = Team ? Team.teamIndex : TeamIndex.Neutral;
-            Vector3 aimOrigin = Attacker.aimOrigin;
+            var body = damageInfo.attacker.GetComponent<CharacterBody>();
+            var Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
+            var characterBody = victim ? victim.GetComponent<CharacterBody>() : null;
+            var master = Attacker.master;
+            var inventory = master.inventory;
+            var Team = Attacker.GetComponent<TeamComponent>();
+            var attackerTeamIndex = Team ? Team.teamIndex : TeamIndex.Neutral;
+            var aimOrigin = Attacker.aimOrigin;
 
-            Vector3 position = damageInfo.position;
-            Vector3 forward = characterBody.corePosition - position;
-            Quaternion rotation = forward.magnitude != 0.0 ? Util.QuaternionSafeLookRotation(forward) : UnityEngine.Random.rotationUniform;
-            float damageCoefficient = (float)(1.25 + 1.25 * itemCount);
-            float damage = Util.OnHitProcDamage(damageInfo.damage, Attacker.damage, damageCoefficient);
+            var position = damageInfo.position;
+            var forward = characterBody.corePosition - position;
+            var rotation = forward.magnitude != 0.0 ? Util.QuaternionSafeLookRotation(forward) : UnityEngine.Random.rotationUniform;
+            var damageCoefficient = (float)(1.25 + 1.25 * itemCount);
+            var damage = Util.OnHitProcDamage(damageInfo.damage, Attacker.damage, damageCoefficient);
 
 #pragma warning disable CS0618 // Obsolete Warning Ignore
             ProjectileManager.instance.FireProjectile(Resources.Load<GameObject>("Prefabs/Projectiles/StickyBomb"), position, rotation, damageInfo.attacker, damage, 100f, damageInfo.crit, DamageColorIndex.Item, (GameObject)null, forward.magnitude * 60f);
@@ -346,10 +346,10 @@ namespace R2API {
 
     class IceRingEffectReplace : ModHitEffect {
         public override bool Condition(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int count) {
-            CharacterBody Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterMaster master = Attacker.master;
+            var Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
+            var master = Attacker.master;
 
-            bool proc = false;
+            var proc = false;
 
             if (EffectAPI.ringBuffer == 0) {
                 proc = Util.CheckRoll(8f * damageInfo.procCoefficient, master);
@@ -362,22 +362,22 @@ namespace R2API {
         }
 
         public override void Effect(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int itemCount) {
-            CharacterBody body = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterBody Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterBody characterBody = victim ? victim.GetComponent<CharacterBody>() : null;
-            CharacterMaster master = Attacker.master;
-            Inventory inventory = master.inventory;
-            TeamComponent Team = Attacker.GetComponent<TeamComponent>();
-            TeamIndex attackerTeamIndex = Team ? Team.teamIndex : TeamIndex.Neutral;
-            Vector3 aimOrigin = Attacker.aimOrigin;
+            var body = damageInfo.attacker.GetComponent<CharacterBody>();
+            var Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
+            var characterBody = victim ? victim.GetComponent<CharacterBody>() : null;
+            var master = Attacker.master;
+            var inventory = master.inventory;
+            var Team = Attacker.GetComponent<TeamComponent>();
+            var attackerTeamIndex = Team ? Team.teamIndex : TeamIndex.Neutral;
+            var aimOrigin = Attacker.aimOrigin;
 
             damageInfo.procChainMask.SetProcValue(ProcType.Rings, true);
 
 
 
-            float damageCoefficient = (float)(1.25 + 1.25 * itemCount);
-            float num3 = Util.OnHitProcDamage(damageInfo.damage, Attacker.damage, damageCoefficient);
-            DamageInfo damageInfo1 = new DamageInfo() {
+            var damageCoefficient = (float)(1.25 + 1.25 * itemCount);
+            var num3 = Util.OnHitProcDamage(damageInfo.damage, Attacker.damage, damageCoefficient);
+            var damageInfo1 = new DamageInfo() {
                 damage = num3,
                 damageColorIndex = DamageColorIndex.Item,
                 damageType = RoR2.DamageType.Generic,
@@ -397,10 +397,10 @@ namespace R2API {
 
     class FireRingEffectReplace : ModHitEffect {
         public override bool Condition(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int count) {
-            CharacterBody Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterMaster master = Attacker.master;
+            var Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
+            var master = Attacker.master;
 
-            bool proc = false;
+            var proc = false;
 
             if (EffectAPI.ringBuffer == 0) {
                 proc = Util.CheckRoll(8f * damageInfo.procCoefficient, master);
@@ -413,24 +413,24 @@ namespace R2API {
         }
 
         public override void Effect(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int itemCount) {
-            CharacterBody body = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterBody Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterBody characterBody = victim ? victim.GetComponent<CharacterBody>() : null;
-            CharacterMaster master = Attacker.master;
-            Inventory inventory = master.inventory;
-            TeamComponent Team = Attacker.GetComponent<TeamComponent>();
-            TeamIndex attackerTeamIndex = Team ? Team.teamIndex : TeamIndex.Neutral;
-            Vector3 aimOrigin = Attacker.aimOrigin;
+            var body = damageInfo.attacker.GetComponent<CharacterBody>();
+            var Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
+            var characterBody = victim ? victim.GetComponent<CharacterBody>() : null;
+            var master = Attacker.master;
+            var inventory = master.inventory;
+            var Team = Attacker.GetComponent<TeamComponent>();
+            var attackerTeamIndex = Team ? Team.teamIndex : TeamIndex.Neutral;
+            var aimOrigin = Attacker.aimOrigin;
 
             damageInfo.procChainMask.SetProcValue(ProcType.Rings, true);
-            GameObject gameObject = Resources.Load<GameObject>("Prefabs/Projectiles/FireTornado");
-            float resetInterval = gameObject.GetComponent<ProjectileOverlapAttack>().resetInterval;
-            float lifetime = gameObject.GetComponent<ProjectileSimple>().lifetime;
-            float damageCoefficient1 = (float)(2.5 + 2.5 * (double)itemCount);
-            float DamageProjectile = Util.OnHitProcDamage(damageInfo.damage, Attacker.damage, damageCoefficient1) / lifetime * resetInterval;
-            float ProjectileSpeed = 0.0f;
-            Quaternion quaternion = Quaternion.identity;
-            Vector3 forward1 = damageInfo.position - aimOrigin;
+            var gameObject = Resources.Load<GameObject>("Prefabs/Projectiles/FireTornado");
+            var resetInterval = gameObject.GetComponent<ProjectileOverlapAttack>().resetInterval;
+            var lifetime = gameObject.GetComponent<ProjectileSimple>().lifetime;
+            var damageCoefficient1 = (float)(2.5 + 2.5 * (double)itemCount);
+            var DamageProjectile = Util.OnHitProcDamage(damageInfo.damage, Attacker.damage, damageCoefficient1) / lifetime * resetInterval;
+            var ProjectileSpeed = 0.0f;
+            var quaternion = Quaternion.identity;
+            var forward1 = damageInfo.position - aimOrigin;
             forward1.y = 0.0f;
             if (forward1 != Vector3.zero) {
                 ProjectileSpeed = -1f;
@@ -462,23 +462,23 @@ namespace R2API {
         }
 
         public override void Effect(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int itemCount) {
-            CharacterBody body = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterBody Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterBody characterBody = victim ? victim.GetComponent<CharacterBody>() : null;
-            CharacterMaster master = Attacker.master;
-            Inventory inventory = master.inventory;
-            CharacterBody component = damageInfo.attacker.GetComponent<CharacterBody>();
+            var body = damageInfo.attacker.GetComponent<CharacterBody>();
+            var Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
+            var characterBody = victim ? victim.GetComponent<CharacterBody>() : null;
+            var master = Attacker.master;
+            var inventory = master.inventory;
+            var component = damageInfo.attacker.GetComponent<CharacterBody>();
 
 
-            float ExplosionRadius = (float)(1.5 + 2.5 * itemCount) * damageInfo.procCoefficient;
-            float damageCoefficient = 0.6f;
-            float Damage = Util.OnHitProcDamage(damageInfo.damage, component.damage, damageCoefficient);
+            var ExplosionRadius = (float)(1.5 + 2.5 * itemCount) * damageInfo.procCoefficient;
+            var damageCoefficient = 0.6f;
+            var Damage = Util.OnHitProcDamage(damageInfo.damage, component.damage, damageCoefficient);
             EffectManager.instance.SpawnEffect(Resources.Load<GameObject>("Prefabs/Effects/OmniEffect/OmniExplosionVFXQuick"), new EffectData() {
                 origin = damageInfo.position,
                 scale = ExplosionRadius,
                 rotation = Util.QuaternionSafeLookRotation(damageInfo.force)
             }, true);
-            BlastAttack blastAttack = new BlastAttack() {
+            var blastAttack = new BlastAttack() {
                 position = damageInfo.position,
                 baseDamage = Damage,
                 baseForce = 0.0f,

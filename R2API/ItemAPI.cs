@@ -194,7 +194,7 @@ namespace R2API {
         /// <param name="Stat"></param>
         /// <returns></returns>
         public float FlatBonus(StatIndex Stat) {
-            CustomItemStat s = m_StatList.Find(x => x.Stat == Stat);
+            var s = m_StatList.Find(x => x.Stat == Stat);
             if (s != null)
                 return s.FlatBonus;
             return 0;
@@ -205,7 +205,7 @@ namespace R2API {
         /// <param name="Stat"></param>
         /// <returns></returns>
         public float StackBonus(StatIndex Stat) {
-            CustomItemStat s = m_StatList.Find(x => x.Stat == Stat);
+            var s = m_StatList.Find(x => x.Stat == Stat);
             if (s != null)
                 return s.StackBonus;
             return 0;
@@ -216,7 +216,7 @@ namespace R2API {
         /// <param name="Stat"></param>
         /// <returns></returns>
         public float MultBonus(StatIndex Stat) {
-            CustomItemStat s = m_StatList.Find(x => x.Stat == Stat);
+            var s = m_StatList.Find(x => x.Stat == Stat);
             if (s != null)
                 return s.MultBonus;
             return 0;
@@ -227,7 +227,7 @@ namespace R2API {
         /// <param name="Stat"></param>
         /// <returns></returns>
         public float MultStackBonus(StatIndex Stat) {
-            CustomItemStat s = m_StatList.Find(x => x.Stat == Stat);
+            var s = m_StatList.Find(x => x.Stat == Stat);
             if (s != null)
                 return s.MultStackBonus;
             return 0;
@@ -239,7 +239,7 @@ namespace R2API {
         /// <param name="Count"></param>
         /// <returns></returns>
         public float GetFlatBonusFromCount(StatIndex Stat, int Count) {
-            CustomItemStat s = m_StatList.Find(x => x.Stat == Stat);
+            var s = m_StatList.Find(x => x.Stat == Stat);
             if (s != null)
                 return s.GetFlatBonusFromCount(Count);
             return 0;
@@ -251,7 +251,7 @@ namespace R2API {
         /// <param name="Count"></param>
         /// <returns></returns>
         public float GetMultStackBonusFromCount(StatIndex Stat, int Count) {
-            CustomItemStat s = m_StatList.Find(x => x.Stat == Stat);
+            var s = m_StatList.Find(x => x.Stat == Stat);
             if (s != null)
                 return s.GetPercentBonusFromCount(Count);
             return 0;
@@ -319,7 +319,7 @@ namespace R2API {
             return Item;
         }
         public static CustomItem operator +(CustomItem Item, List<ModHitEffect> Effects) {
-            foreach (ModHitEffect Effect in Effects)
+            foreach (var Effect in Effects)
                 if (!Item.m_EffectList.Exists(x => x.GetType() == Effect.GetType())) {
                     Item.m_EffectList.Add(Effect);
                 }
@@ -337,7 +337,7 @@ namespace R2API {
             return Item;
         }
         public static CustomItem operator +(CustomItem Item, List<CustomItemStat> Stats) {
-            foreach (CustomItemStat Stat in Stats)
+            foreach (var Stat in Stats)
                 if (Item.m_StatList.Exists(x => x.Stat == Stat.Stat)) {
                     Item.m_StatList[Item.m_StatList.FindIndex(x => x.Stat == Stat.Stat)] += Stat;
                 }
@@ -439,7 +439,7 @@ namespace R2API {
         static public void Init() {
             m_DefaultModItemDictionary = new Dictionary<int, CustomItem>();
 
-            foreach (ItemIndex itemIndex in (ItemIndex[])Enum.GetValues(typeof(ItemIndex))) {
+            foreach (var itemIndex in (ItemIndex[])Enum.GetValues(typeof(ItemIndex))) {
                 if (itemIndex != ItemIndex.Count && itemIndex != ItemIndex.None) {
                     m_DefaultModItemDictionary.Add((int)itemIndex, new CustomItem((int)itemIndex));
                 }
@@ -493,7 +493,7 @@ namespace R2API {
 
             ModItemDictionary = new Dictionary<int, CustomItem>();
 
-            foreach (KeyValuePair<int, CustomItem> kv in m_DefaultModItemDictionary) {
+            foreach (var kv in m_DefaultModItemDictionary) {
                 ModItemDictionary.Add(kv.Key, kv.Value);
             }
         }
@@ -501,7 +501,7 @@ namespace R2API {
         static public float GetBonusForStat(CharacterBody c, StatIndex stat) {
             float value = 0;
             if (c.inventory) {
-                foreach (KeyValuePair<int, CustomItem> kv in ModItemDictionary) {
+                foreach (var kv in ModItemDictionary) {
                     if (ModItemDictionary.ContainsKey(kv.Key) && c.inventory.GetItemCount(kv.Key) > 0)
                         value += kv.Value.GetFlatBonusFromCount(stat, c.inventory.GetItemCount(kv.Key));
                 }
@@ -511,7 +511,7 @@ namespace R2API {
         static public float GetMultiplierForStat(CharacterBody c, StatIndex stat) {
             float value = 0;
             if (c.inventory) {
-                foreach (KeyValuePair<int, CustomItem> kv in ModItemDictionary) {
+                foreach (var kv in ModItemDictionary) {
                     if (ModItemDictionary.ContainsKey(kv.Key) && c.inventory.GetItemCount(kv.Key) > 0)
                         value += kv.Value.GetMultStackBonusFromCount(stat, c.inventory.GetItemCount(kv.Key));
                 }
@@ -522,7 +522,7 @@ namespace R2API {
         static public float GetMultiplierForStatCD(CharacterBody c, StatIndex stat) {
             float value = 1;
             if (c.inventory) {
-                foreach (KeyValuePair<int, CustomItem> kv in ModItemDictionary) {
+                foreach (var kv in ModItemDictionary) {
                     if (ModItemDictionary.ContainsKey(kv.Key) && c.inventory.GetItemCount(kv.Key) > 0)
                         if (kv.Value.GetMultStackBonusFromCount(stat, c.inventory.GetItemCount(kv.Key)) != 0)
                             value *= kv.Value.GetMultStackBonusFromCount(stat, c.inventory.GetItemCount(kv.Key));
@@ -532,18 +532,18 @@ namespace R2API {
         }
 
         static public void OnHitEnemyEffects(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim) {
-            float procCoefficient = damageInfo.procCoefficient;
-            CharacterBody body = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterMaster master = body.master;
+            var procCoefficient = damageInfo.procCoefficient;
+            var body = damageInfo.attacker.GetComponent<CharacterBody>();
+            var master = body.master;
             if (!(bool)body || procCoefficient <= 0.0 || !(bool)body || !(bool)master || !(bool)master.inventory)
                 return;
 
-            Inventory inventory = master.inventory;
+            var inventory = master.inventory;
 
-            foreach (KeyValuePair<int, CustomItem> Kv in ModItemDictionary) {
-                int count = inventory.GetItemCount(Kv.Key);
+            foreach (var Kv in ModItemDictionary) {
+                var count = inventory.GetItemCount(Kv.Key);
                 if (count > 0) {
-                    foreach (ModHitEffect HitEffects in Kv.Value.GetHitEffectList) {
+                    foreach (var HitEffects in Kv.Value.GetHitEffectList) {
 
                         if (HitEffects.EffectType == HitEffectType.OnHitEnemy && HitEffects.Condition(globalEventManager, damageInfo, victim, count)) {
                             HitEffects.Effect(globalEventManager, damageInfo, victim, count);
@@ -554,18 +554,18 @@ namespace R2API {
         }
 
         static public void OnHitAllEffects(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim) {
-            float procCoefficient = damageInfo.procCoefficient;
-            CharacterBody body = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterMaster master = body.master;
+            var procCoefficient = damageInfo.procCoefficient;
+            var body = damageInfo.attacker.GetComponent<CharacterBody>();
+            var master = body.master;
             if (!(bool)body || procCoefficient <= 0.0 || !(bool)body || !(bool)master || !(bool)master.inventory)
                 return;
 
-            Inventory inventory = master.inventory;
+            var inventory = master.inventory;
 
-            foreach (KeyValuePair<int, CustomItem> Kv in ModItemDictionary) {
-                int count = inventory.GetItemCount(Kv.Key);
+            foreach (var Kv in ModItemDictionary) {
+                var count = inventory.GetItemCount(Kv.Key);
                 if (count > 0) {
-                    foreach (ModHitEffect HitEffects in Kv.Value.GetHitEffectList) {
+                    foreach (var HitEffects in Kv.Value.GetHitEffectList) {
 
                         if (HitEffects.EffectType == HitEffectType.OnHitAll && HitEffects.Condition(globalEventManager, damageInfo, victim, count)) {
                             HitEffects.Effect(globalEventManager, damageInfo, victim, count);

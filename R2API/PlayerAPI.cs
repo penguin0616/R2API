@@ -84,10 +84,10 @@ namespace R2API {
         }
 
         public override float RecalculateHealth(float baseValue, CharacterBody character) {
-            float MaxHealth = character.baseMaxHealth + (character.level - 1) * character.levelMaxHealth;
-            float HealthBonusItem = 0;
-            float hpbooster = 1;
-            float healthDivider = 1;
+            var MaxHealth = character.baseMaxHealth + (character.level - 1) * character.levelMaxHealth;
+            var HealthBonusItem = 0f;
+            var hpbooster = 1f;
+            var healthDivider = 1f;
             if ((bool)character.inventory) {
                 HealthBonusItem += CustomItemAPI.GetBonusForStat(character, StatIndex.MaxHealth);
 
@@ -102,7 +102,7 @@ namespace R2API {
         }
 
         public override float RecalculateShield(float baseValue, CharacterBody character) {
-            float MaxShield = character.baseMaxShield + character.levelMaxShield * (character.level - 1);
+            var MaxShield = character.baseMaxShield + character.levelMaxShield * (character.level - 1);
 
             if (character.inventory) {
                 if (character.inventory.GetItemCount(ItemIndex.ShieldOnly) > 0) {
@@ -132,10 +132,10 @@ namespace R2API {
         }
 
         public override float RecalculateRegen(float baseValue, CharacterBody character) {
-            float BaseRegen = (character.baseRegen + character.levelRegen * (character.level - 1)) * 2.5f;
+            var BaseRegen = (character.baseRegen + character.levelRegen * (character.level - 1)) * 2.5f;
 
-            float RegenBonus = 0;
-            float regenmult = 1;
+            var RegenBonus = 0f;
+            var regenmult = 1f;
             //Item Related
             if ((bool)character.inventory) {
                 RegenBonus += CustomItemAPI.GetBonusForStat(character, StatIndex.Regen);
@@ -148,16 +148,16 @@ namespace R2API {
                     regenmult += CustomItemAPI.GetMultiplierForStat(character, StatIndex.SafeRegen);
             }
 
-            float totalRegen = (BaseRegen * regenmult + RegenBonus);
+            var totalRegen = (BaseRegen * regenmult + RegenBonus);
 
             return totalRegen;
 
         }
 
         public override float RecalculateMoveSpeed(float baseValue, CharacterBody character) {
-            float BaseMoveSpeed = character.baseMoveSpeed + character.levelMoveSpeed * (character.level - 1);
+            var BaseMoveSpeed = character.baseMoveSpeed + character.levelMoveSpeed * (character.level - 1);
 
-            float SpeedBonus = 1;
+            var SpeedBonus = 1f;
 
 
             //More weird stuff
@@ -195,7 +195,7 @@ namespace R2API {
             }
 
             //Debuff Speed
-            float SpeedMalus = 1f;
+            var SpeedMalus = 1f;
             if (character.HasBuff(BuffIndex.Slow50))
                 SpeedMalus += 0.5f;
             if (character.HasBuff(BuffIndex.Slow60))
@@ -218,7 +218,7 @@ namespace R2API {
                     BaseMoveSpeed += CustomItemAPI.GetBonusForStat(character, StatIndex.SafeRunningMoveSpeed);
             }
 
-            float MoveSpeed = BaseMoveSpeed * (SpeedBonus / SpeedMalus);
+            var MoveSpeed = BaseMoveSpeed * (SpeedBonus / SpeedMalus);
             if ((bool)character.inventory) {
                 MoveSpeed *= 1.0f - 0.05f * character.GetBuffCount(BuffIndex.BeetleJuice);
             }
@@ -228,23 +228,23 @@ namespace R2API {
 
 
         public override float RecalculateJumpPower(float baseValue, CharacterBody character) {
-            float JumpPower = character.baseJumpPower + character.levelJumpPower * (character.level - 1) + CustomItemAPI.GetBonusForStat(character, StatIndex.JumpPower);
+            var JumpPower = character.baseJumpPower + character.levelJumpPower * (character.level - 1) + CustomItemAPI.GetBonusForStat(character, StatIndex.JumpPower);
             JumpPower *= 1 + CustomItemAPI.GetMultiplierForStat(character, StatIndex.JumpPower);
             return JumpPower;
         }
 
         public override float RecalculateJumpCount(float baseValue, CharacterBody character) {
-            float JumpCount = character.baseJumpCount + CustomItemAPI.GetBonusForStat(character, StatIndex.JumpCount);
+            var JumpCount = character.baseJumpCount + CustomItemAPI.GetBonusForStat(character, StatIndex.JumpCount);
             JumpCount *= 1 + CustomItemAPI.GetMultiplierForStat(character, StatIndex.JumpCount);
             return JumpCount;
         }
 
         public override float RecalculateDamage(float baseValue, CharacterBody character) {
-            float BaseDamage = character.baseDamage + character.levelDamage * (character.level - 1);
+            var BaseDamage = character.baseDamage + character.levelDamage * (character.level - 1);
             BaseDamage += CustomItemAPI.GetBonusForStat(character, StatIndex.Damage);
 
-            float DamageBoost = 0;
-            int DamageBoostCount = character.inventory ? character.inventory.GetItemCount(ItemIndex.BoostDamage) : 0;
+            var DamageBoost = 0f;
+            var DamageBoostCount = character.inventory ? character.inventory.GetItemCount(ItemIndex.BoostDamage) : 0;
             if (DamageBoostCount > 0)
                 DamageBoost += DamageBoostCount * DamageBoost;
             DamageBoost -= 0.05f * character.GetBuffCount(BuffIndex.BeetleJuice);
@@ -252,23 +252,23 @@ namespace R2API {
             if (character.HasBuff(BuffIndex.GoldEmpowered))
                 DamageBoost += 1;
 
-            float DamageMult = DamageBoost + (character.CalcLunarDaggerPower());
+            var DamageMult = DamageBoost + (character.CalcLunarDaggerPower());
             DamageMult += CustomItemAPI.GetMultiplierForStat(character, StatIndex.Damage);
             return BaseDamage * DamageMult;
         }
 
         public override float RecalculateAttackSpeed(float baseValue, CharacterBody character) {
-            float BaseAttackSpeed = character.baseAttackSpeed + character.levelAttackSpeed * (character.level - 1);
+            var BaseAttackSpeed = character.baseAttackSpeed + character.levelAttackSpeed * (character.level - 1);
 
             //Item efect
-            float AttackSpeedBonus = 1f;
+            var AttackSpeedBonus = 1f;
             if (character.inventory) {
                 if (character.inventory.currentEquipmentIndex == EquipmentIndex.AffixYellow)
                     AttackSpeedBonus += 0.5f;
             }
 
             //Buffs
-            float AttackSpeedMult = AttackSpeedBonus + character.GetFieldValue<int[]>("buffs")[2] * 0.12f;
+            var AttackSpeedMult = AttackSpeedBonus + character.GetFieldValue<int[]>("buffs")[2] * 0.12f;
             if (character.HasBuff(BuffIndex.Warbanner))
                 AttackSpeedMult += 0.3f;
             if (character.HasBuff(BuffIndex.EnrageAncientWisp))
@@ -279,7 +279,7 @@ namespace R2API {
 
             BaseAttackSpeed += CustomItemAPI.GetBonusForStat(character, StatIndex.AttackSpeed);
             AttackSpeedMult += CustomItemAPI.GetMultiplierForStat(character, StatIndex.AttackSpeed);
-            float AttackSpeed = BaseAttackSpeed * AttackSpeedMult;
+            var AttackSpeed = BaseAttackSpeed * AttackSpeedMult;
             //Debuff
             AttackSpeed *= 1 - (0.05f * character.GetBuffCount(BuffIndex.BeetleJuice));
 
@@ -287,7 +287,7 @@ namespace R2API {
         }
 
         public override float RecalculateCrit(float baseValue, CharacterBody character) {
-            float CriticalChance = character.baseCrit + character.levelCrit * (character.level - 1);
+            var CriticalChance = character.baseCrit + character.levelCrit * (character.level - 1);
 
 
             CriticalChance += CustomItemAPI.GetBonusForStat(character, StatIndex.Crit);
@@ -301,14 +301,14 @@ namespace R2API {
         }
 
         public override float RecalculateArmor(float baseValue, CharacterBody character) {
-            float BaseArmor = character.baseArmor + character.levelArmor * (character.level - 1);
-            float BonusArmor = 0;
+            var BaseArmor = character.baseArmor + character.levelArmor * (character.level - 1);
+            var BonusArmor = 0f;
 
             if (character.HasBuff(BuffIndex.ArmorBoost))
                 BonusArmor += 200;
             if (character.HasBuff(BuffIndex.Cripple))
                 BonusArmor -= 20;
-            float TotalArmor = BaseArmor + BonusArmor;
+            var TotalArmor = BaseArmor + BonusArmor;
             TotalArmor += CustomItemAPI.GetBonusForStat(character, StatIndex.Armor);
             if (character.isSprinting)
                 TotalArmor += CustomItemAPI.GetBonusForStat(character, StatIndex.RunningArmor);
@@ -319,7 +319,7 @@ namespace R2API {
         }
 
         public override float RecalculateGeneralCooldown(float baseValue, CharacterBody character) {
-            float CoolDownMultiplier = 1f;
+            var CoolDownMultiplier = 1f;
             CoolDownMultiplier += CustomItemAPI.GetBonusForStat(character, StatIndex.GlobalCoolDown);
 
             CoolDownMultiplier *= CustomItemAPI.GetMultiplierForStatCD(character, StatIndex.GlobalCoolDown);
@@ -334,54 +334,54 @@ namespace R2API {
         }
 
         public override float RecalculatePrimaryCoolDown(float baseValue, CharacterBody character) {
-            float CoolDownMultiplier = 1f;
+            var CoolDownMultiplier = 1f;
             CoolDownMultiplier += CustomItemAPI.GetBonusForStat(character, StatIndex.CoolDownPrimary);
 
             CoolDownMultiplier *= CustomItemAPI.GetMultiplierForStatCD(character, StatIndex.CoolDownPrimary);
             return CoolDownMultiplier;
         }
         public override float RecalculatePrimaryCount(float baseValue, CharacterBody character) {
-            float count = 0;
+            var count = 0f;
             count += CustomItemAPI.GetBonusForStat(character, StatIndex.CountPrimary);
 
             count *= 1 + CustomItemAPI.GetMultiplierForStat(character, StatIndex.CountPrimary);
             return count;
         }
         public override float RecalculateSecondaryCooldown(float baseValue, CharacterBody character) {
-            float CoolDownMultiplier = 1f;
+            var CoolDownMultiplier = 1f;
             CoolDownMultiplier += CustomItemAPI.GetBonusForStat(character, StatIndex.CoolDownSecondary);
 
             CoolDownMultiplier *= CustomItemAPI.GetMultiplierForStatCD(character, StatIndex.CoolDownSecondary);
             return CoolDownMultiplier;
         }
         public override float RecalculateSecondaryCount(float baseValue, CharacterBody character) {
-            float count = 0;
+            var count = 0f;
             count += CustomItemAPI.GetBonusForStat(character, StatIndex.CountSecondary);
             count *= 1 + CustomItemAPI.GetMultiplierForStat(character, StatIndex.CountSecondary);
             return count;
         }
         public override float RecalculateSpecialCooldown(float baseValue, CharacterBody character) {
-            float CoolDownMultiplier = 1f;
+            var CoolDownMultiplier = 1f;
             CoolDownMultiplier += CustomItemAPI.GetBonusForStat(character, StatIndex.CoolDownUtility);
 
             CoolDownMultiplier *= CustomItemAPI.GetMultiplierForStatCD(character, StatIndex.CoolDownUtility);
             return CoolDownMultiplier;
         }
         public override float RecalculateSpecialCount(float baseValue, CharacterBody character) {
-            float count = 0;
+            var count = 0f;
             count += CustomItemAPI.GetBonusForStat(character, StatIndex.CountUtility);
             count *= 1 + CustomItemAPI.GetMultiplierForStat(character, StatIndex.CountUtility);
             return count;
         }
         public override float RecalculateUtilityCooldown(float baseValue, CharacterBody character) {
-            float CoolDownMultiplier = 1f;
+            var CoolDownMultiplier = 1f;
             CoolDownMultiplier += CustomItemAPI.GetBonusForStat(character, StatIndex.CoolDownSpecial);
 
             CoolDownMultiplier *= CustomItemAPI.GetMultiplierForStatCD(character, StatIndex.CoolDownSpecial);
             return CoolDownMultiplier;
         }
         public override float RecalculateUtilityCount(float baseValue, CharacterBody character) {
-            float count = 0;
+            var count = 0f;
             count += CustomItemAPI.GetBonusForStat(character, StatIndex.CountSpecial);
 
             count *= 1 + CustomItemAPI.GetMultiplierForStat(character, StatIndex.CountSpecial);
@@ -400,8 +400,8 @@ namespace R2API {
         }
 
         static float StatHandler(MethodInfo method, CharacterBody character) {
-            float value = 0;
-            foreach (ModRecalculateCustom recal in m_RecalulateList) {
+            var value = 0f;
+            foreach (var recal in m_RecalulateList) {
                 value = (float)method.Invoke(recal, new object[2] { value, character });
             }
             return value;
@@ -425,12 +425,12 @@ namespace R2API {
         }
 
         static public void ReorderRecalculateList() {
-            Dictionary<int, ModRecalculateCustom> m__temp_RecalulateDic = new Dictionary<int, ModRecalculateCustom>();
-            foreach (ModRecalculateCustom obj in m_RecalulateList) {
+            var m__temp_RecalulateDic = new Dictionary<int, ModRecalculateCustom>();
+            foreach (var obj in m_RecalulateList) {
                 m__temp_RecalulateDic.AddOrder(obj.RecalculatePriority, obj);
             }
             m_RecalulateList = new List<ModRecalculateCustom>();
-            foreach (KeyValuePair<int, ModRecalculateCustom> kv in m__temp_RecalulateDic) {
+            foreach (var kv in m__temp_RecalulateDic) {
                 m_RecalulateList.Add(kv.Value);
             }
         }
@@ -451,7 +451,7 @@ namespace R2API {
                 return;
 
             CustomItemAPI.Update();
-            foreach (ModRecalculateCustom recal in m_RecalulateList) {
+            foreach (var recal in m_RecalulateList) {
                 recal.InvokeMethod("UpdateItem", new object[1] { characterBody });
             }
 
@@ -467,8 +467,8 @@ namespace R2API {
 
             characterBody.SetPropertyValue("isElite", characterBody.GetFieldValue<BuffMask>("buffMask").containsEliteBuff);
 
-            float preHealth = characterBody.maxHealth;
-            float preShield = characterBody.maxShield;
+            var preHealth = characterBody.maxHealth;
+            var preShield = characterBody.maxShield;
 
             characterBody.SetPropertyValue("maxHealth", StatHandler(GetMethodInfo(new ModRecalculateCustom().RecalculateHealth), characterBody));
 
@@ -491,7 +491,7 @@ namespace R2API {
             characterBody.SetPropertyValue("armor", StatHandler(GetMethodInfo(new ModRecalculateCustom().RecalculateArmor), characterBody));
 
             //CoolDown 
-            float CoolDownMultiplier = StatHandler(GetMethodInfo(new ModRecalculateCustom().RecalculateGeneralCooldown), characterBody);
+            var CoolDownMultiplier = StatHandler(GetMethodInfo(new ModRecalculateCustom().RecalculateGeneralCooldown), characterBody);
             if ((bool)characterBody.GetFieldValue<SkillLocator>("skillLocator").primary) {
                 characterBody.GetFieldValue<SkillLocator>("skillLocator").primary.cooldownScale = StatHandler(GetMethodInfo(new ModRecalculateCustom().RecalculatePrimaryCoolDown), characterBody) * CoolDownMultiplier;
                 if (characterBody.GetFieldValue<SkillLocator>("skillLocator").primary.baseMaxStock > 1)
@@ -514,15 +514,15 @@ namespace R2API {
             characterBody.SetPropertyValue("critHeal", 0.0f);
             if (characterBody.inventory) {
                 if (characterBody.inventory.GetItemCount(ItemIndex.CritHeal) > 0) {
-                    float crit = characterBody.crit;
+                    var crit = characterBody.crit;
                     characterBody.SetPropertyValue("crit", characterBody.crit / (characterBody.inventory.GetItemCount(ItemIndex.CritHeal) + 1));
                     characterBody.SetPropertyValue("critHeal", crit - characterBody.crit);
                 }
             }
 
             if (NetworkServer.active) {
-                float HealthOffset = characterBody.maxHealth - preHealth;
-                float ShieldOffset = characterBody.maxShield - preShield;
+                var HealthOffset = characterBody.maxHealth - preHealth;
+                var ShieldOffset = characterBody.maxShield - preShield;
                 if (HealthOffset > 0) {
                     double num47 = characterBody.healthComponent.Heal(HealthOffset, new ProcChainMask(), false);
                 }

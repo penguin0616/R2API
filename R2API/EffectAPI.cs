@@ -17,30 +17,30 @@ namespace R2API {
             if (damageInfo.procCoefficient == 0 || !NetworkServer.active || (!(bool)damageInfo.attacker || damageInfo.procCoefficient <= 0))
                 return;
 
-            CharacterBody Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
-            CharacterBody characterBody = victim ? victim.GetComponent<CharacterBody>() : null;
+            var Attacker = damageInfo.attacker.GetComponent<CharacterBody>();
+            var characterBody = victim ? victim.GetComponent<CharacterBody>() : null;
 
             if (!Attacker)
                 return;
-            CharacterMaster master = Attacker.master;
+            var master = Attacker.master;
             if (!master)
                 return;
             damageInfo.procChainMask.LinkToManager();
 
-            Inventory inventory = master.inventory;
-            TeamComponent Team = Attacker.GetComponent<TeamComponent>();
-            TeamIndex attackerTeamIndex = Team ? Team.teamIndex : TeamIndex.Neutral;
+            var inventory = master.inventory;
+            var Team = Attacker.GetComponent<TeamComponent>();
+            var attackerTeamIndex = Team ? Team.teamIndex : TeamIndex.Neutral;
 
-            Vector3 aimOrigin = Attacker.aimOrigin;
+            var aimOrigin = Attacker.aimOrigin;
 
             CustomItemAPI.OnHitEnemyEffects(self, damageInfo, victim);
 
 
-            //SetOnFire . Can't realy do much for this one 
-            int DamageType = (uint)(damageInfo.damageType & RoR2.DamageType.IgniteOnHit) > 0U ? 1 : 0;
-            bool CanSetFire = (damageInfo.damageType & RoR2.DamageType.IgniteOnHit) != RoR2.DamageType.Generic || Attacker.HasBuff(BuffIndex.AffixRed);
+            //SetOnFire . Can't realy do much for this one
+            var DamageType = (uint)(damageInfo.damageType & RoR2.DamageType.IgniteOnHit) > 0U ? 1 : 0;
+            var CanSetFire = (damageInfo.damageType & RoR2.DamageType.IgniteOnHit) != RoR2.DamageType.Generic || Attacker.HasBuff(BuffIndex.AffixRed);
             //bool CanSetFire = (damageInfo.damageType & RoR2.DamageType.PercentIgniteOnHit) != RoR2.DamageType.Generic || Attacker.HasBuff(BuffIndex.AffixRed); //Depend on Dll version
-            int num2 = CanSetFire ? 1 : 0;
+            var num2 = CanSetFire ? 1 : 0;
             if ((DamageType | num2) != 0)
                 DotController.InflictDot(victim, damageInfo.attacker, CanSetFire ? DotController.DotIndex.Burn : DotController.DotIndex.Burn, 4f * damageInfo.procCoefficient, 1f);
             //DotController.InflictDot(victim, damageInfo.attacker, CanSetFire ? DotController.DotIndex.PercentBurn : DotController.DotIndex.Burn, 4f * damageInfo.procCoefficient, 1f); //Depend on Dll version
@@ -55,16 +55,16 @@ namespace R2API {
 
             if ((double)damageInfo.procCoefficient == 0.0)
                 return;
-            int Host = NetworkServer.active ? 1 : 0;
+            var Host = NetworkServer.active ? 1 : 0;
             if (!(bool)((UnityEngine.Object)damageInfo.attacker))
                 return;
-            CharacterBody component = damageInfo.attacker.GetComponent<CharacterBody>();
+            var component = damageInfo.attacker.GetComponent<CharacterBody>();
             if (!(bool)((UnityEngine.Object)component))
                 return;
-            CharacterMaster master = component.master;
+            var master = component.master;
             if (!(bool)((UnityEngine.Object)master))
                 return;
-            Inventory inventory = master.inventory;
+            var inventory = master.inventory;
             if (!(bool)((UnityEngine.Object)master.inventory))
                 return;
             damageInfo.procChainMask.LinkToManager();
@@ -75,9 +75,9 @@ namespace R2API {
             //Buff
             if ((component.HasBuff(BuffIndex.AffixBlue) ? 1 : 0) <= 0)
                 return;
-            float damage = damageInfo.damage * 0.5f;
-            float force = 0.0f;
-            Vector3 position = damageInfo.position;
+            var damage = damageInfo.damage * 0.5f;
+            var force = 0.0f;
+            var position = damageInfo.position;
 #pragma warning disable CS0618 //Obsolete warning
             ProjectileManager.instance.FireProjectile(Resources.Load<GameObject>("Prefabs/Projectiles/LightningStake"), position, Quaternion.identity, damageInfo.attacker, damage, force, damageInfo.crit, DamageColorIndex.Item, (GameObject)null, -1f);
 #pragma warning restore CS0618
