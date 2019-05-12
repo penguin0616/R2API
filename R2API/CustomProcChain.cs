@@ -16,24 +16,24 @@ namespace R2API.Utils {
             }
         }
 
-        public void ChangeProcState(string Proc, bool value) {
-            if (ProcList.ContainsKey(Proc))
-                ProcList[Proc] = value;
+        public void ChangeProcState(string proc, bool value) {
+            if (ProcList.ContainsKey(proc))
+                ProcList[proc] = value;
         }
     }
 
-    static class ProcChainMaskExtention {
-        public static void SetProcValue(this ProcChainMask procMask, string ProcName, bool value) {
-            ModProcManager.SetProcValue(procMask, ProcName, value);
+    static class ProcChainMaskExtension {
+        public static void SetProcValue(this ProcChainMask procMask, string procName, bool value) {
+            ModProcManager.SetProcValue(procMask, procName, value);
         }
-        public static void SetProcValue(this ProcChainMask procMask, ProcType Proc, bool value) {
-            ModProcManager.SetProcValue(procMask, Proc.ToString(), value);
+        public static void SetProcValue(this ProcChainMask procMask, ProcType proc, bool value) {
+            ModProcManager.SetProcValue(procMask, proc.ToString(), value);
         }
-        public static bool GetProcValue(this ProcChainMask procMask, string ProcName) {
-            return ModProcManager.GetProcValue(procMask, ProcName);
+        public static bool GetProcValue(this ProcChainMask procMask, string procName) {
+            return ModProcManager.GetProcValue(procMask, procName);
         }
-        public static bool GetProcValue(this ProcChainMask procMask, ProcType Proc) {
-            return ModProcManager.GetProcValue(procMask, Proc.ToString());
+        public static bool GetProcValue(this ProcChainMask procMask, ProcType proc) {
+            return ModProcManager.GetProcValue(procMask, proc.ToString());
         }
         public static void LinkToManager(this ProcChainMask procMask) {
             ModProcManager.AddLink(procMask, new ModProc());
@@ -48,36 +48,36 @@ namespace R2API.Utils {
         public static List<string> CustomProcList = new List<string>();
 
         /// <summary>
-        /// Used to decalre new Proc Type in addition to existing one
+        /// Used to declare new Proc Type in addition to existing one
         /// </summary>
-        /// <param name="ProcName"></param>
-        public static void DeclareNewProc(string ProcName) {
-            if (!CustomProcList.Contains(ProcName)) {
-                CustomProcList.Add(ProcName);
+        /// <param name="procName"></param>
+        public static void DeclareNewProc(string procName) {
+            if (!CustomProcList.Contains(procName)) {
+                CustomProcList.Add(procName);
             }
             else {
-                throw new Exception("Mod Proc Manager : Trying to declare an existing Proc : " + ProcName);
+                throw new Exception("Mod Proc Manager : Trying to declare an existing Proc : " + procName);
             }
         }
 
         public static Dictionary<ProcChainMask, ModProc> ProcChainLinker = new Dictionary<ProcChainMask, ModProc>();
 
-        public static void SetProcValue(ProcChainMask chain, string ProcName, bool value) {
+        public static void SetProcValue(ProcChainMask chain, string procName, bool value) {
             if (ProcChainLinker.ContainsKey(chain)) {
-                ProcChainLinker[chain].ChangeProcState(ProcName, value);
+                ProcChainLinker[chain].ChangeProcState(procName, value);
             }
         }
-        public static bool GetProcValue(ProcChainMask chain, string ProcName) {
+        public static bool GetProcValue(ProcChainMask chain, string procName) {
             if (ProcChainLinker.ContainsKey(chain)) {
-                if (ProcChainLinker[chain].ProcList.ContainsKey(ProcName))
-                    return ProcChainLinker[chain].ProcList[ProcName];
+                if (ProcChainLinker[chain].ProcList.ContainsKey(procName))
+                    return ProcChainLinker[chain].ProcList[procName];
             }
             return false;
         }
 
-        public static void AddLink(ProcChainMask chain, ModProc modproc) {
+        public static void AddLink(ProcChainMask chain, ModProc modProc) {
             if (!ProcChainLinker.ContainsKey(chain)) {
-                ProcChainLinker.Add(chain, modproc);
+                ProcChainLinker.Add(chain, modProc);
             }
         }
 

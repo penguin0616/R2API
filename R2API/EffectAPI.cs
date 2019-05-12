@@ -9,10 +9,10 @@ namespace R2API {
         /// Please don't touch this value, Used by ice and Fire ring since they share the SAME roll
         /// 0 mean Unset, 1 = True, 2 = False
         /// </summary>
-        static public int ringBuffer = 0;
+        public static int ringBuffer = 0;
 
 
-        static public void ModdedHitEnemy(On.RoR2.GlobalEventManager.orig_OnHitEnemy orig, GlobalEventManager self, DamageInfo damageInfo, GameObject victim) {
+        public static void ModdedHitEnemy(On.RoR2.GlobalEventManager.orig_OnHitEnemy orig, GlobalEventManager self, DamageInfo damageInfo, GameObject victim) {
 
             if (damageInfo.procCoefficient == 0 || !NetworkServer.active || (!(bool)damageInfo.attacker || damageInfo.procCoefficient <= 0))
                 return;
@@ -36,7 +36,7 @@ namespace R2API {
             CustomItemAPI.OnHitEnemyEffects(self, damageInfo, victim);
 
 
-            //SetOnFire . Can't realy do much for this one
+            //SetOnFire . Can't really do much for this one
             var DamageType = (uint)(damageInfo.damageType & RoR2.DamageType.IgniteOnHit) > 0U ? 1 : 0;
             var CanSetFire = (damageInfo.damageType & RoR2.DamageType.IgniteOnHit) != RoR2.DamageType.Generic || Attacker.HasBuff(BuffIndex.AffixRed);
             //bool CanSetFire = (damageInfo.damageType & RoR2.DamageType.PercentIgniteOnHit) != RoR2.DamageType.Generic || Attacker.HasBuff(BuffIndex.AffixRed); //Depend on Dll version
@@ -46,26 +46,26 @@ namespace R2API {
             //DotController.InflictDot(victim, damageInfo.attacker, CanSetFire ? DotController.DotIndex.PercentBurn : DotController.DotIndex.Burn, 4f * damageInfo.procCoefficient, 1f); //Depend on Dll version
 
             //Apply Ice Elite (Will have to wait for Buff Change for that)
-            if ((Attacker.HasBuff(BuffIndex.AffixWhite) ? 1 : 0) > 0 && (bool)((UnityEngine.Object)characterBody))
+            if ((Attacker.HasBuff(BuffIndex.AffixWhite) ? 1 : 0) > 0 && (bool)((Object)characterBody))
                 characterBody.AddTimedBuff(BuffIndex.Slow80, 1.5f * damageInfo.procCoefficient);
 
             damageInfo.procChainMask.UnlinkToManager();
         }
-        static public void ModdedHitAll(On.RoR2.GlobalEventManager.orig_OnHitAll orig, GlobalEventManager self, DamageInfo damageInfo, GameObject victim) {
+        public static void ModdedHitAll(On.RoR2.GlobalEventManager.orig_OnHitAll orig, GlobalEventManager self, DamageInfo damageInfo, GameObject victim) {
 
             if ((double)damageInfo.procCoefficient == 0.0)
                 return;
             var Host = NetworkServer.active ? 1 : 0;
-            if (!(bool)((UnityEngine.Object)damageInfo.attacker))
+            if (!(bool)((Object)damageInfo.attacker))
                 return;
             var component = damageInfo.attacker.GetComponent<CharacterBody>();
-            if (!(bool)((UnityEngine.Object)component))
+            if (!(bool)((Object)component))
                 return;
             var master = component.master;
-            if (!(bool)((UnityEngine.Object)master))
+            if (!(bool)((Object)master))
                 return;
             var inventory = master.inventory;
-            if (!(bool)((UnityEngine.Object)master.inventory))
+            if (!(bool)((Object)master.inventory))
                 return;
             damageInfo.procChainMask.LinkToManager();
 

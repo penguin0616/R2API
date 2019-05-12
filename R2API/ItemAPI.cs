@@ -73,51 +73,51 @@ namespace R2API {
 
         #region Constructor
         /// <summary>
-        /// 
+        ///
         /// </summary>
-        /// <param name="FlatBonus">Flat bonus when player Have the item</param>
-        /// <param name="FlatStackBonus">Flat bonus for each additional item the player own</param>
-        /// <param name="MultBonus">Multiplicative bonus when player Have the item</param>
-        /// <param name="MultStackBonus">Multiplicative bonus for each additional item the player own, for Cooldowns values of 0 are ignored</param>
-        /// <param name="Stat"></param>
-        public CustomItemStat(float FlatBonus, float FlatStackBonus, float MultBonus, float MultStackBonus, StatIndex Stat) {
-            m_BaseBonus = FlatBonus;
-            m_StackBonus = FlatStackBonus;
-            m_BaseMultBonus = MultBonus;
-            m_StackMultBonus = MultStackBonus;
-            this.Stat = Stat;
+        /// <param name="flatBonus">Flat bonus when player Have the item</param>
+        /// <param name="flatStackBonus">Flat bonus for each additional item the player own</param>
+        /// <param name="multBonus">Multiplicative bonus when player Have the item</param>
+        /// <param name="multStackBonus">Multiplicative bonus for each additional item the player own, for Cooldowns values of 0 are ignored</param>
+        /// <param name="stat"></param>
+        public CustomItemStat(float flatBonus, float flatStackBonus, float multBonus, float multStackBonus, StatIndex stat) {
+            m_BaseBonus = flatBonus;
+            m_StackBonus = flatStackBonus;
+            m_BaseMultBonus = multBonus;
+            m_StackMultBonus = multStackBonus;
+            Stat = stat;
         }
         /// <summary>
-        /// Set Flat and Stack Bonusat the same time, if you want to set the separatly use ModItemStats(float FlatBonus, float StackBonus, StatIndex Stat)
+        /// Set Flat and Stack Bonus at the same time, if you want to set the separately use ModItemStats(float FlatBonus, float StackBonus, StatIndex Stat)
         /// </summary>
-        /// <param name="FlatBonus">Flat bonus for each item the player own</param>
-        /// <param name="Stat"></param>
-        public CustomItemStat(float FlatBonus, StatIndex Stat) {
-            m_BaseBonus = FlatBonus;
-            m_StackBonus = FlatBonus;
+        /// <param name="flatBonus">Flat bonus for each item the player own</param>
+        /// <param name="stat"></param>
+        public CustomItemStat(float flatBonus, StatIndex stat) {
+            m_BaseBonus = flatBonus;
+            m_StackBonus = flatBonus;
             m_BaseMultBonus = 0;
             m_StackMultBonus = 0;
-            this.Stat = Stat;
+            Stat = stat;
         }
         /// <summary>
-        /// 
+        ///
         /// </summary>
-        /// <param name="FlatBonus">Flat bonus when player Have the item</param>
+        /// <param name="flatBonus">Flat bonus when player Have the item</param>
         /// <param name="FlatStackBonus">Flat bonus for each additional item the player own</param>
         /// <param name="MultBonus">Multiplicative bonus for each item the player own</param>
-        public CustomItemStat(float FlatBonus, float StackBonus, StatIndex Stat) {
-            m_BaseBonus = FlatBonus;
-            m_StackBonus = StackBonus;
+        public CustomItemStat(float flatBonus, float stackBonus, StatIndex stat) {
+            m_BaseBonus = flatBonus;
+            m_StackBonus = stackBonus;
             m_BaseMultBonus = 0;
             m_StackMultBonus = 0;
-            this.Stat = Stat;
+            Stat = stat;
         }
-        public CustomItemStat(float FlatBonus, float StackBonus, float MultBonus, StatIndex Stat) {
-            m_BaseBonus = FlatBonus;
-            m_StackBonus = StackBonus;
-            m_BaseMultBonus = MultBonus;
-            m_StackMultBonus = MultBonus;
-            this.Stat = Stat;
+        public CustomItemStat(float flatBonus, float stackBonus, float multBonus, StatIndex stat) {
+            m_BaseBonus = flatBonus;
+            m_StackBonus = stackBonus;
+            m_BaseMultBonus = multBonus;
+            m_StackMultBonus = multBonus;
+            Stat = stat;
         }
         #endregion
 
@@ -165,10 +165,10 @@ namespace R2API {
         /// <param name="victim"></param>
         /// <param name="itemCount"></param>
         /// <returns></returns>
-        virtual public bool Condition(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int itemCount) {
+        public virtual bool Condition(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int itemCount) {
             return true;
         }
-        virtual public void Effect(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int itemCount) {
+        public virtual void Effect(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim, int itemCount) {
 
         }
     }
@@ -191,10 +191,10 @@ namespace R2API {
         /// <summary>
         /// Flat bonus of the First Item
         /// </summary>
-        /// <param name="Stat"></param>
+        /// <param name="stat"></param>
         /// <returns></returns>
-        public float FlatBonus(StatIndex Stat) {
-            var s = m_StatList.Find(x => x.Stat == Stat);
+        public float FlatBonus(StatIndex stat) {
+            var s = m_StatList.Find(x => x.Stat == stat);
             if (s != null)
                 return s.FlatBonus;
             return 0;
@@ -202,10 +202,10 @@ namespace R2API {
         /// <summary>
         /// Flat bonus Per item after the first one
         /// </summary>
-        /// <param name="Stat"></param>
+        /// <param name="stat"></param>
         /// <returns></returns>
-        public float StackBonus(StatIndex Stat) {
-            var s = m_StatList.Find(x => x.Stat == Stat);
+        public float StackBonus(StatIndex stat) {
+            var s = m_StatList.Find(x => x.Stat == stat);
             if (s != null)
                 return s.StackBonus;
             return 0;
@@ -213,10 +213,10 @@ namespace R2API {
         /// <summary>
         /// Multiplicative bonus of the First item
         /// </summary>
-        /// <param name="Stat"></param>
+        /// <param name="stat"></param>
         /// <returns></returns>
-        public float MultBonus(StatIndex Stat) {
-            var s = m_StatList.Find(x => x.Stat == Stat);
+        public float MultBonus(StatIndex stat) {
+            var s = m_StatList.Find(x => x.Stat == stat);
             if (s != null)
                 return s.MultBonus;
             return 0;
@@ -224,10 +224,10 @@ namespace R2API {
         /// <summary>
         /// Multiplicative bonus Per item after the first one
         /// </summary>
-        /// <param name="Stat"></param>
+        /// <param name="stat"></param>
         /// <returns></returns>
-        public float MultStackBonus(StatIndex Stat) {
-            var s = m_StatList.Find(x => x.Stat == Stat);
+        public float MultStackBonus(StatIndex stat) {
+            var s = m_StatList.Find(x => x.Stat == stat);
             if (s != null)
                 return s.MultStackBonus;
             return 0;
@@ -235,147 +235,147 @@ namespace R2API {
         /// <summary>
         /// Get FlatBonus From Count
         /// </summary>
-        /// <param name="Stat"></param>
-        /// <param name="Count"></param>
+        /// <param name="stat"></param>
+        /// <param name="count"></param>
         /// <returns></returns>
-        public float GetFlatBonusFromCount(StatIndex Stat, int Count) {
-            var s = m_StatList.Find(x => x.Stat == Stat);
+        public float GetFlatBonusFromCount(StatIndex stat, int count) {
+            var s = m_StatList.Find(x => x.Stat == stat);
             if (s != null)
-                return s.GetFlatBonusFromCount(Count);
+                return s.GetFlatBonusFromCount(count);
             return 0;
         }
         /// <summary>
         /// Get Multiplicative Bonus from Count
         /// </summary>
-        /// <param name="Stat"></param>
-        /// <param name="Count"></param>
+        /// <param name="stat"></param>
+        /// <param name="count"></param>
         /// <returns></returns>
-        public float GetMultStackBonusFromCount(StatIndex Stat, int Count) {
-            var s = m_StatList.Find(x => x.Stat == Stat);
+        public float GetMultStackBonusFromCount(StatIndex stat, int count) {
+            var s = m_StatList.Find(x => x.Stat == stat);
             if (s != null)
-                return s.GetPercentBonusFromCount(Count);
+                return s.GetPercentBonusFromCount(count);
             return 0;
         }
         #endregion
 
 
-        public CustomItem(int Index) {
-            this.m_Index = Index;
+        public CustomItem(int index) {
+            m_Index = index;
             m_StatList = new List<CustomItemStat>();
             m_EffectList = new List<ModHitEffect>();
         }
 
-        public CustomItem(int Index, List<CustomItemStat> Stats) {
-            this.m_Index = Index;
-            m_StatList = Stats;
+        public CustomItem(int index, List<CustomItemStat> stats) {
+            m_Index = index;
+            m_StatList = stats;
             m_EffectList = new List<ModHitEffect>();
         }
 
-        public CustomItem(int Index, CustomItemStat Stat) {
-            this.m_Index = Index;
+        public CustomItem(int index, CustomItemStat stat) {
+            m_Index = index;
             m_StatList = new List<CustomItemStat>
             {
-                Stat
+                stat
             };
             m_EffectList = new List<ModHitEffect>();
         }
-        public CustomItem(int Index, CustomItemStat Stat1, CustomItemStat Stat2) {
-            this.m_Index = Index;
+        public CustomItem(int index, CustomItemStat stat1, CustomItemStat stat2) {
+            m_Index = index;
             m_StatList = new List<CustomItemStat>
             {
-                Stat1,
-                Stat2
+                stat1,
+                stat2
             };
             m_EffectList = new List<ModHitEffect>();
         }
-        public CustomItem(int Index, CustomItemStat Stat1, CustomItemStat Stat2, CustomItemStat Stat3) {
-            this.m_Index = Index;
+        public CustomItem(int index, CustomItemStat stat1, CustomItemStat stat2, CustomItemStat stat3) {
+            m_Index = index;
             m_StatList = new List<CustomItemStat>
             {
-                Stat1,
-                Stat2,
-                Stat3
+                stat1,
+                stat2,
+                stat3
             };
             m_EffectList = new List<ModHitEffect>();
         }
-        public CustomItem(int Index, CustomItemStat Stat1, CustomItemStat Stat2, CustomItemStat Stat3, CustomItemStat Stat4) {
-            this.m_Index = Index;
+        public CustomItem(int index, CustomItemStat stat1, CustomItemStat stat2, CustomItemStat stat3, CustomItemStat stat4) {
+            m_Index = index;
             m_StatList = new List<CustomItemStat>
             {
-                Stat1,
-                Stat2,
-                Stat3,
-                Stat4
+                stat1,
+                stat2,
+                stat3,
+                stat4
             };
             m_EffectList = new List<ModHitEffect>();
         }
 
         #region Operator
 
-        public static CustomItem operator +(CustomItem Item, ModHitEffect Effect) {
-            if (!Item.m_EffectList.Exists(x => x.GetType() == Effect.GetType())) {
-                Item.m_EffectList.Add(Effect);
+        public static CustomItem operator +(CustomItem item, ModHitEffect effect) {
+            if (!item.m_EffectList.Exists(x => x.GetType() == effect.GetType())) {
+                item.m_EffectList.Add(effect);
             }
-            return Item;
+            return item;
         }
-        public static CustomItem operator +(CustomItem Item, List<ModHitEffect> Effects) {
-            foreach (var Effect in Effects)
-                if (!Item.m_EffectList.Exists(x => x.GetType() == Effect.GetType())) {
-                    Item.m_EffectList.Add(Effect);
+        public static CustomItem operator +(CustomItem item, List<ModHitEffect> effects) {
+            foreach (var effect in effects)
+                if (!item.m_EffectList.Exists(x => x.GetType() == effect.GetType())) {
+                    item.m_EffectList.Add(effect);
                 }
-            return Item;
+            return item;
         }
 
 
-        public static CustomItem operator +(CustomItem Item, CustomItemStat Stat) {
-            if (Item.m_StatList.Exists(x => x.Stat == Stat.Stat)) {
-                Item.m_StatList[Item.m_StatList.FindIndex(x => x.Stat == Stat.Stat)] += Stat;
+        public static CustomItem operator +(CustomItem item, CustomItemStat stat) {
+            if (item.m_StatList.Exists(x => x.Stat == stat.Stat)) {
+                item.m_StatList[item.m_StatList.FindIndex(x => x.Stat == stat.Stat)] += stat;
             }
             else {
-                Item.m_StatList.Add(Stat);
+                item.m_StatList.Add(stat);
             }
-            return Item;
+            return item;
         }
-        public static CustomItem operator +(CustomItem Item, List<CustomItemStat> Stats) {
-            foreach (var Stat in Stats)
-                if (Item.m_StatList.Exists(x => x.Stat == Stat.Stat)) {
-                    Item.m_StatList[Item.m_StatList.FindIndex(x => x.Stat == Stat.Stat)] += Stat;
+        public static CustomItem operator +(CustomItem item, List<CustomItemStat> stats) {
+            foreach (var stat in stats)
+                if (item.m_StatList.Exists(x => x.Stat == stat.Stat)) {
+                    item.m_StatList[item.m_StatList.FindIndex(x => x.Stat == stat.Stat)] += stat;
                 }
                 else {
-                    Item.m_StatList.Add(Stat);
+                    item.m_StatList.Add(stat);
                 }
-            return Item;
+            return item;
         }
-        public static CustomItem operator -(CustomItem Item, CustomItemStat Stat) {
-            if (Item.m_StatList.Exists(x => x.Stat == Stat.Stat)) {
-                Item.m_StatList[Item.m_StatList.FindIndex(x => x.Stat == Stat.Stat)] -= Stat;
+        public static CustomItem operator -(CustomItem item, CustomItemStat stat) {
+            if (item.m_StatList.Exists(x => x.Stat == stat.Stat)) {
+                item.m_StatList[item.m_StatList.FindIndex(x => x.Stat == stat.Stat)] -= stat;
             }
-            return Item;
+            return item;
         }
         #endregion
     }
 
-    static public class CustomItemAPI {
+    public static class CustomItemAPI {
 
         internal static void InitHooks() {
 
             Init();
         }
 
-        static public Dictionary<int, CustomItem> ModItemDictionary;
-        static private Dictionary<int, CustomItem> m_DefaultModItemDictionary;
-        static public Dictionary<int, CustomItem> DefaultModItemDictionary { get { return m_DefaultModItemDictionary; } }
+        public static Dictionary<int, CustomItem> ModItemDictionary;
+        private static Dictionary<int, CustomItem> m_DefaultModItemDictionary;
+        public static Dictionary<int, CustomItem> DefaultModItemDictionary { get { return m_DefaultModItemDictionary; } }
 
-        static private void DefaultOnHitEffect(int index, ModHitEffect HitEffect) {
+        private static void DefaultOnHitEffect(int index, ModHitEffect hitEffect) {
             if (m_DefaultModItemDictionary.ContainsKey(index)) {
-                m_DefaultModItemDictionary[index] += HitEffect;
+                m_DefaultModItemDictionary[index] += hitEffect;
             }
             else {
                 throw new Exception("ModItemManager ERROR : int does not exist in m_DefaultModItemDictionary\nBtw you shouldn't mess with this boi !  Index :  " + index);
             }
         }
 
-        static private void DefaultStatItem(int index, CustomItemStat stat) {
+        private static void DefaultStatItem(int index, CustomItemStat stat) {
             if (m_DefaultModItemDictionary.ContainsKey(index)) {
                 m_DefaultModItemDictionary[index] += stat;
             }
@@ -384,33 +384,33 @@ namespace R2API {
             }
         }
 
-        public static void AddOnHitEffect(int index, ModHitEffect HitEffect) {
+        public static void AddOnHitEffect(int index, ModHitEffect hitEffect) {
             if (ModItemDictionary.ContainsKey(index)) {
-                ModItemDictionary[index] += HitEffect;
+                ModItemDictionary[index] += hitEffect;
             }
             else {
                 throw new Exception("ModItemManager ERROR : int does not exist in ModItemDictionary");
             }
         }
-        public static void AddOnHitEffect(int index, List<ModHitEffect> HitEffects) {
+        public static void AddOnHitEffect(int index, List<ModHitEffect> hitEffects) {
             if (ModItemDictionary.ContainsKey(index)) {
-                ModItemDictionary[index] += HitEffects;
+                ModItemDictionary[index] += hitEffects;
             }
             else {
                 throw new Exception("ModItemManager ERROR : int does not exist in ModItemDictionary");
             }
         }
 
-        static public void AddModItem(int index, CustomItem ModItem) {
+        public static void AddModItem(int index, CustomItem modItem) {
             if (!ModItemDictionary.ContainsKey(index)) {
-                ModItemDictionary.Add(index, ModItem);
+                ModItemDictionary.Add(index, modItem);
             }
             else {
-                ModItemDictionary[index] += ModItem.GetStatsList;
+                ModItemDictionary[index] += modItem.GetStatsList;
             }
 
         }
-        static public void AddStatToItem(int index, CustomItemStat stat) {
+        public static void AddStatToItem(int index, CustomItemStat stat) {
             if (ModItemDictionary.ContainsKey(index)) {
                 ModItemDictionary[index] += stat;
             }
@@ -418,7 +418,7 @@ namespace R2API {
                 throw new Exception("ModItemManager ERROR : int does not exist in ModItemDictionary");
             }
         }
-        static public void AddStatToItem(int index, List<CustomItemStat> stats) {
+        public static void AddStatToItem(int index, List<CustomItemStat> stats) {
             if (ModItemDictionary.ContainsKey(index)) {
                 ModItemDictionary[index] += stats;
             }
@@ -427,7 +427,7 @@ namespace R2API {
             }
         }
 
-        static public CustomItem GetModItem(int index) {
+        public static CustomItem GetModItem(int index) {
             if (ModItemDictionary.ContainsKey(index)) {
                 return ModItemDictionary[index];
             }
@@ -436,7 +436,7 @@ namespace R2API {
             }
         }
 
-        static public void Init() {
+        public static void Init() {
             m_DefaultModItemDictionary = new Dictionary<int, CustomItem>();
 
             foreach (var itemIndex in (ItemIndex[])Enum.GetValues(typeof(ItemIndex))) {
@@ -459,7 +459,7 @@ namespace R2API {
             DefaultOnHitEffect((int)ItemIndex.StickyBomb, new StickyBombOnHitReplace());
             DefaultOnHitEffect((int)ItemIndex.IceRing, new IceRingEffectReplace());
             DefaultOnHitEffect((int)ItemIndex.FireRing, new FireRingEffectReplace());
-            DefaultOnHitEffect((int)ItemIndex.Behemoth, new BehemotEffectReplace());
+            DefaultOnHitEffect((int)ItemIndex.Behemoth, new BehemothEffectReplace());
 
             //Default Stats
             DefaultStatItem((int)ItemIndex.Knurl, new CustomItemStat(40, StatIndex.MaxHealth));
@@ -489,7 +489,7 @@ namespace R2API {
             Update();
         }
 
-        static public void Update() {
+        public static void Update() {
 
             ModItemDictionary = new Dictionary<int, CustomItem>();
 
@@ -498,7 +498,7 @@ namespace R2API {
             }
         }
 
-        static public float GetBonusForStat(CharacterBody c, StatIndex stat) {
+        public static float GetBonusForStat(CharacterBody c, StatIndex stat) {
             float value = 0;
             if (c.inventory) {
                 foreach (var kv in ModItemDictionary) {
@@ -508,7 +508,7 @@ namespace R2API {
             }
             return value;
         }
-        static public float GetMultiplierForStat(CharacterBody c, StatIndex stat) {
+        public static float GetMultiplierForStat(CharacterBody c, StatIndex stat) {
             float value = 0;
             if (c.inventory) {
                 foreach (var kv in ModItemDictionary) {
@@ -519,7 +519,7 @@ namespace R2API {
             return value;
         }
 
-        static public float GetMultiplierForStatCD(CharacterBody c, StatIndex stat) {
+        public static float GetMultiplierForStatCD(CharacterBody c, StatIndex stat) {
             float value = 1;
             if (c.inventory) {
                 foreach (var kv in ModItemDictionary) {
@@ -531,7 +531,7 @@ namespace R2API {
             return value;
         }
 
-        static public void OnHitEnemyEffects(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim) {
+        public static void OnHitEnemyEffects(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim) {
             var procCoefficient = damageInfo.procCoefficient;
             var body = damageInfo.attacker.GetComponent<CharacterBody>();
             var master = body.master;
@@ -540,20 +540,20 @@ namespace R2API {
 
             var inventory = master.inventory;
 
-            foreach (var Kv in ModItemDictionary) {
-                var count = inventory.GetItemCount(Kv.Key);
+            foreach (var kv in ModItemDictionary) {
+                var count = inventory.GetItemCount(kv.Key);
                 if (count > 0) {
-                    foreach (var HitEffects in Kv.Value.GetHitEffectList) {
+                    foreach (var hitEffects in kv.Value.GetHitEffectList) {
 
-                        if (HitEffects.EffectType == HitEffectType.OnHitEnemy && HitEffects.Condition(globalEventManager, damageInfo, victim, count)) {
-                            HitEffects.Effect(globalEventManager, damageInfo, victim, count);
+                        if (hitEffects.EffectType == HitEffectType.OnHitEnemy && hitEffects.Condition(globalEventManager, damageInfo, victim, count)) {
+                            hitEffects.Effect(globalEventManager, damageInfo, victim, count);
                         }
                     }
                 }
             }
         }
 
-        static public void OnHitAllEffects(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim) {
+        public static void OnHitAllEffects(GlobalEventManager globalEventManager, DamageInfo damageInfo, GameObject victim) {
             var procCoefficient = damageInfo.procCoefficient;
             var body = damageInfo.attacker.GetComponent<CharacterBody>();
             var master = body.master;
@@ -562,13 +562,13 @@ namespace R2API {
 
             var inventory = master.inventory;
 
-            foreach (var Kv in ModItemDictionary) {
-                var count = inventory.GetItemCount(Kv.Key);
+            foreach (var kv in ModItemDictionary) {
+                var count = inventory.GetItemCount(kv.Key);
                 if (count > 0) {
-                    foreach (var HitEffects in Kv.Value.GetHitEffectList) {
+                    foreach (var hitEffects in kv.Value.GetHitEffectList) {
 
-                        if (HitEffects.EffectType == HitEffectType.OnHitAll && HitEffects.Condition(globalEventManager, damageInfo, victim, count)) {
-                            HitEffects.Effect(globalEventManager, damageInfo, victim, count);
+                        if (hitEffects.EffectType == HitEffectType.OnHitAll && hitEffects.Condition(globalEventManager, damageInfo, victim, count)) {
+                            hitEffects.Effect(globalEventManager, damageInfo, victim, count);
                         }
                     }
                 }
@@ -578,8 +578,8 @@ namespace R2API {
     }
 
     static class InventoryExtender {
-        public static int GetItemCount(this Inventory inv, int ItemIndex) {
-            return inv.GetFieldValue<int[]>("itemStacks")[ItemIndex];
+        public static int GetItemCount(this Inventory inv, int itemIndex) {
+            return inv.GetFieldValue<int[]>("itemStacks")[itemIndex];
         }
     }
 
