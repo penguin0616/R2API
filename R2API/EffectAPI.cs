@@ -27,11 +27,6 @@ namespace R2API {
                 return;
             damageInfo.procChainMask.LinkToManager();
 
-            var inventory = master.inventory;
-            var Team = Attacker.GetComponent<TeamComponent>();
-            var attackerTeamIndex = Team ? Team.teamIndex : TeamIndex.Neutral;
-
-            var aimOrigin = Attacker.aimOrigin;
 
             CustomItemAPI.OnHitEnemyEffects(self, damageInfo, victim);
 
@@ -56,16 +51,15 @@ namespace R2API {
             if ((double)damageInfo.procCoefficient == 0.0)
                 return;
             var Host = NetworkServer.active ? 1 : 0;
-            if (!(bool)((Object)damageInfo.attacker))
+            if (!(bool)damageInfo.attacker)
                 return;
             var component = damageInfo.attacker.GetComponent<CharacterBody>();
-            if (!(bool)((Object)component))
+            if (!(bool)component)
                 return;
             var master = component.master;
-            if (!(bool)((Object)master))
+            if (!(bool)master)
                 return;
-            var inventory = master.inventory;
-            if (!(bool)((Object)master.inventory))
+            if (!(bool)master.inventory)
                 return;
             damageInfo.procChainMask.LinkToManager();
 

@@ -154,7 +154,7 @@ namespace R2API {
 
     }
 
-    public class ModHitEffect {
+    public class HitEffect {
 
         public HitEffectType EffectType = HitEffectType.OnHitEnemy;
         /// <summary>
@@ -178,14 +178,14 @@ namespace R2API {
         public ItemDef Item { get; private set; }
 
         private int m_Index;
-        private List<ModHitEffect> m_EffectList;
+        private List<HitEffect> m_EffectList;
 
         private List<CustomItemStat> m_StatList;
 
 
         #region properties
         public List<CustomItemStat> GetStatsList { get { return m_StatList; } }
-        public List<ModHitEffect> GetHitEffectList { get { return m_EffectList; } }
+        public List<HitEffect> GetHitEffectList { get { return m_EffectList; } }
         public int Index { get { return m_Index; } private set { m_Index = value; } }
 
         /// <summary>
@@ -262,13 +262,13 @@ namespace R2API {
         public CustomItem(int index) {
             m_Index = index;
             m_StatList = new List<CustomItemStat>();
-            m_EffectList = new List<ModHitEffect>();
+            m_EffectList = new List<HitEffect>();
         }
 
         public CustomItem(int index, List<CustomItemStat> stats) {
             m_Index = index;
             m_StatList = stats;
-            m_EffectList = new List<ModHitEffect>();
+            m_EffectList = new List<HitEffect>();
         }
 
         public CustomItem(int index, CustomItemStat stat) {
@@ -277,7 +277,7 @@ namespace R2API {
             {
                 stat
             };
-            m_EffectList = new List<ModHitEffect>();
+            m_EffectList = new List<HitEffect>();
         }
         public CustomItem(int index, CustomItemStat stat1, CustomItemStat stat2) {
             m_Index = index;
@@ -286,7 +286,7 @@ namespace R2API {
                 stat1,
                 stat2
             };
-            m_EffectList = new List<ModHitEffect>();
+            m_EffectList = new List<HitEffect>();
         }
         public CustomItem(int index, CustomItemStat stat1, CustomItemStat stat2, CustomItemStat stat3) {
             m_Index = index;
@@ -296,7 +296,7 @@ namespace R2API {
                 stat2,
                 stat3
             };
-            m_EffectList = new List<ModHitEffect>();
+            m_EffectList = new List<HitEffect>();
         }
         public CustomItem(int index, CustomItemStat stat1, CustomItemStat stat2, CustomItemStat stat3, CustomItemStat stat4) {
             m_Index = index;
@@ -307,18 +307,18 @@ namespace R2API {
                 stat3,
                 stat4
             };
-            m_EffectList = new List<ModHitEffect>();
+            m_EffectList = new List<HitEffect>();
         }
 
         #region Operator
 
-        public static CustomItem operator +(CustomItem item, ModHitEffect effect) {
+        public static CustomItem operator +(CustomItem item, HitEffect effect) {
             if (!item.m_EffectList.Exists(x => x.GetType() == effect.GetType())) {
                 item.m_EffectList.Add(effect);
             }
             return item;
         }
-        public static CustomItem operator +(CustomItem item, List<ModHitEffect> effects) {
+        public static CustomItem operator +(CustomItem item, List<HitEffect> effects) {
             foreach (var effect in effects)
                 if (!item.m_EffectList.Exists(x => x.GetType() == effect.GetType())) {
                     item.m_EffectList.Add(effect);
@@ -366,7 +366,7 @@ namespace R2API {
         private static Dictionary<int, CustomItem> m_DefaultModItemDictionary;
         public static Dictionary<int, CustomItem> DefaultModItemDictionary { get { return m_DefaultModItemDictionary; } }
 
-        private static void DefaultOnHitEffect(int index, ModHitEffect hitEffect) {
+        private static void DefaultOnHitEffect(int index, HitEffect hitEffect) {
             if (m_DefaultModItemDictionary.ContainsKey(index)) {
                 m_DefaultModItemDictionary[index] += hitEffect;
             }
@@ -384,7 +384,7 @@ namespace R2API {
             }
         }
 
-        public static void AddOnHitEffect(int index, ModHitEffect hitEffect) {
+        public static void AddOnHitEffect(int index, HitEffect hitEffect) {
             if (ModItemDictionary.ContainsKey(index)) {
                 ModItemDictionary[index] += hitEffect;
             }
@@ -392,7 +392,7 @@ namespace R2API {
                 throw new Exception("ModItemManager ERROR : int does not exist in ModItemDictionary");
             }
         }
-        public static void AddOnHitEffect(int index, List<ModHitEffect> hitEffects) {
+        public static void AddOnHitEffect(int index, List<HitEffect> hitEffects) {
             if (ModItemDictionary.ContainsKey(index)) {
                 ModItemDictionary[index] += hitEffects;
             }
